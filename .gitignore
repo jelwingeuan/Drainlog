@@ -1,0 +1,7 @@
+target/
+.build/
+*.dmg
+build/
+.DS_Store
+# raw captures from the dev Mac stay local; tests use the trimmed sample
+core/tests/fixtures/pmset_log.txt
