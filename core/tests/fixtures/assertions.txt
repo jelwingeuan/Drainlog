@@ -1,0 +1,20 @@
+2026-11-13 03:15:17 +0800 
+Assertion status system-wide:
+   BackgroundTask                 0
+   ApplePushServiceTask           0
+   UserIsActive                   1
+   PreventUserIdleDisplaySleep    0
+   SoftwareUpdateTask             0
+   PreventSystemSleep             0
+   PreventSystemSleepSecurityIndicator 0
+   ExternalMedia                  0
+   PreventUserIdleSystemSleep     1
+   NetworkClientActive            0
+Listed by owning process:
+   pid 32088(Claude): [0x00076fcc00019037] 00:13:44 NoIdleSleepAssertion named: "Electron"  
+   pid 363(powerd): [0x00076fa500019000] 00:14:24 PreventUserIdleSystemSleep named: "Powerd - Prevent sleep while display is on"  
+   pid 363(powerd): [0x0000de420009918f] 00:14:24 UserIsActive named: "com.apple.powermanagement.lidopen"  
+   pid 363(powerd): [0x00035f020009a318] 124:36:08 UserIsActive named: "com.apple.powermanagement.kernel.useractive AppleM68Buttons:sleepDisplayTickle kIOMessageSystemWillSleep"  
+   pid 420(WindowServer): [0x0000d95a00098a8f] 00:00:22 UserIsActive named: "com.apple.iohideventsystem.queue.tickle serviceID:1000584a4 service:AppleMultitouchDevice product:Apple Internal Keyboard / Trackpad eventType:11"  
+Kernel Assertions: 0x100=MAGICWAKE
+   id=541  level=255 0x100=MAGICWAKE creat=2/11/26 21:09 description=en0 owner=IOSkywalkNetworkBSDClient

@@ -1,0 +1,3 @@
+Scheduled power events:
+ [0]  wake at 11/13/2026 03:40:42 by 'com.apple.alarm.user-invisible-com.apple.acmd.alarm'
+ [1]  wake at 11/13/2026 08:08:03 by 'com.apple.alarm.user-invisible-com.apple.calaccessd.travelEngine.periodicRefreshTimer'
