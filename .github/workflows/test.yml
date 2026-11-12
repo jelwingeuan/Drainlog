@@ -1,0 +1,12 @@
+name: test
+on: [push, pull_request]
+jobs:
+  core:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: core
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo test --locked
+      - run: cargo clippy --all-targets --locked -- -D warnings
