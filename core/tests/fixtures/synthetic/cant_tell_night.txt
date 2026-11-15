@@ -1,0 +1,12 @@
+# SYNTHETIC fixture: hand-made in the exact `pmset -g log` line format, but on battery
+# ("Using Batt"). NOT captured from a real Mac; the real log (pmset_log.txt) has no battery
+# nights. "#SAMPLE <ts> mah= max= pct= ac=" lines stand in for IOKit battery samples; the
+# pmset parser skips them like any line without a leading timestamp.
+# Can't-tell night (Nov 8): one unbroken 8 h sleep with no wakes, holds or scheduled wakes
+# logged, yet 350 mAh gone: 270 mAh more than the baseline explains.
+2026-11-08 18:00:00 +0800 Wake                	Wake from Deep Idle [CDNVA] : due to smc.sysState.Wake(0x70070000) lid SMC.OutboxNotEmpty/UserActivity Assertion Using Batt (Charge:88%)
+2026-11-08 23:00:00 +0800 Sleep               	Entering DarkWake state due to 'Clamshell Sleep':TCPKeepAlive=active Using Batt (Charge:87%) 1 secs
+2026-11-08 23:00:01 +0800 Sleep               	Entering Sleep state due to 'Clamshell Sleep':TCPKeepAlive=active Using Batt (Charge:87%) 28799 secs
+#SAMPLE 2026-11-08 23:00:01 +0800 mah=3400 max=3913 pct=87 ac=0
+2026-11-09 07:00:00 +0800 Wake                	Wake from Deep Idle [CDNVA] : due to smc.sysState.Wake(0x70070000) lid SMC.OutboxNotEmpty/UserActivity Assertion Using Batt (Charge:78%)
+#SAMPLE 2026-11-09 07:00:02 +0800 mah=3050 max=3913 pct=78 ac=0

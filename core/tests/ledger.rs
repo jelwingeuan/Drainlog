@@ -2,8 +2,9 @@
 //! The real log on this Mac has no battery nights, so these are hand-made in the exact
 //! `pmset -g log` format with "#SAMPLE" lines standing in for IOKit samples.
 
+mod common;
+
 use chrono::FixedOffset;
-use drainlog::battery::Sample;
 use drainlog::ledger::Ledger;
 use drainlog::parse::{self, parse_ts};
 use drainlog::store;
@@ -13,6 +14,9 @@ const CLEAN: &str = include_str!("fixtures/synthetic/clean_nights.txt");
 const POWERNAP: &str = include_str!("fixtures/synthetic/powernap_night.txt");
 const SCHEDULED: &str = include_str!("fixtures/synthetic/scheduled_night.txt");
 const CAFFEINATE: &str = include_str!("fixtures/synthetic/caffeinate_night.txt");
+const BLUETOOTH: &str = include_str!("fixtures/synthetic/bluetooth_night.txt");
+const TWO_CAUSES: &str = include_str!("fixtures/synthetic/two_causes_night.txt");
+const CANT_TELL: &str = include_str!("fixtures/synthetic/cant_tell_night.txt");
 
 fn ts(s: &str) -> i64 {
     parse_ts(s).unwrap()
@@ -23,27 +27,12 @@ fn run(texts: &[&str], extra: impl Fn(&Connection)) -> (Connection, Ledger) {
     let conn = store::open(":memory:").unwrap();
     for text in texts {
         store::ingest_log(&conn, text).unwrap();
-        for rest in text.lines().filter_map(|l| l.strip_prefix("#SAMPLE ")) {
-            let kv = |k: &str| -> i64 {
-                rest[26..]
-                    .split_whitespace()
-                    .find_map(|p| p.strip_prefix(&format!("{k}=")))
-                    .unwrap()
-                    .parse()
-                    .unwrap()
-            };
-            let s = Sample {
-                ts: ts(&rest[..25]),
-                mah: kv("mah"),
-                max_mah: kv("max"),
-                pct: kv("pct"),
-                on_ac: kv("ac") != 0,
-            };
+        for s in common::samples(text) {
             store::insert_sample(&conn, &s, "test").unwrap();
         }
     }
     extra(&conn);
-    let ledger = store::rebuild(&conn, ts("2026-11-07 12:00:00 +0800")).unwrap();
+    let ledger = store::rebuild(&conn, ts("2026-11-10 12:00:00 +0800")).unwrap();
     check_sums(&conn);
     (conn, ledger)
 }
@@ -125,7 +114,10 @@ fn clean_night_is_normal_sleep_drain() {
 
 #[test]
 fn clean_night_before_calibration_says_so() {
-    // Only the first clean night: baseline from 1 night is not calibrated yet.
+    // Only the first clean night. Its own sleep may not calibrate it, so with no other night
+    // it is priced at the 4.0 mAh/h default: 48 of 80 mAh unexplained and a quiet log, so it
+    // can't be told apart from a can't-tell night yet. The stored baseline (for the next
+    // night) does use it.
     let first_night: String = CLEAN
         .lines()
         .take_while(|l| !l.starts_with("2026-11-02 18"))
@@ -133,11 +125,17 @@ fn clean_night_before_calibration_says_so() {
         .join("\n");
     let (conn, l) = run(&[&first_night], |_| {});
     assert!(!l.baseline.calibrated && l.baseline.clean_nights == 1);
+    assert_eq!(l.nights[0].baseline.source, "default");
     let (top, headline, ..) = latest(&conn);
-    assert_eq!(top, "normal");
-    assert!(
-        l.nights[0].timeline[2].1.contains("not calibrated yet"),
-        "{headline}"
+    assert_eq!(top, "cant_tell");
+    assert_eq!(
+        headline,
+        "You lost 2% (80 mAh) overnight. Can't tell yet: baseline not measured."
+    );
+    assert_eq!(cause(&conn, "unexplained"), Some((48, false)));
+    assert_eq!(
+        l.nights[0].timeline[2].1,
+        "Split estimated: baseline sleep 32 mAh at 4.0 mAh/h (default guess, not measured yet, est.); unexplained 48 mAh (60%)."
     );
 }
 
@@ -154,13 +152,16 @@ fn powernap_night() {
         (top.as_str(), drop, measured, estimated),
         ("powernap", 350, true, true)
     );
-    assert!(
-        headline.starts_with("You lost 9% (350 mAh) overnight. Mostly Power Nap"),
-        "{headline}"
+    // The fit uses the other nights only, and 2 are too few: 29 of 31 DarkWakes are priced
+    // at the default rate, so unexplained is the largest part. 23 min of logged wakes is
+    // too much activity to call it can't tell, so Power Nap is named, as estimated.
+    assert_eq!(l.nights[2].baseline.dark_source, "default");
+    assert_eq!(
+        headline,
+        "You lost 9% (350 mAh) overnight. Mostly Power Nap / maintenance wakes. 66% is unexplained."
     );
-    let (nap, nap_est) = cause(&conn, "powernap").unwrap();
-    assert!(nap_est, "29 of 31 DarkWakes are priced by the fitted rate");
-    assert!(nap * 100 / drop > 60, "{nap}");
+    assert_eq!(cause(&conn, "powernap"), Some((43, true)));
+    assert_eq!(cause(&conn, "unexplained"), Some((231, false)));
     // The two sampled DarkWakes are measured at 2 mAh each.
     let measured: Vec<f64> = conn
         .prepare("SELECT mah FROM intervals WHERE measured = 1 AND night = (SELECT MAX(start_ts) FROM nights)")
@@ -248,6 +249,105 @@ fn caffeinate_held_but_lid_sleep_won() {
     assert_eq!(
         n.timeline.last().unwrap().1,
         "caffeinate held PreventUserIdleSystemSleep, but lid-close sleep won."
+    );
+}
+
+#[test]
+fn uncalibrated_night_ranks_causes_by_logged_time() {
+    // One night and no other, so default rates. A measured 60 s Power Nap wake (40 mAh) costs
+    // more than 20 min held by caffeinate at the default rate (36 mAh). With no calibrated
+    // baseline the mAh split is a guess, so the longer logged activity is named.
+    let night = "2026-11-08 18:00:00 +0800 Wake                \tWake from Deep Idle [CDNVA] : due to smc.sysState.Wake(0x70070000) lid SMC.OutboxNotEmpty/UserActivity Assertion Using Batt (Charge:90%)\n\
+                 2026-11-08 22:55:00 +0800 Assertions          \tPID 6161(caffeinate) Created PreventUserIdleSystemSleep \"caffeinate command-line tool\" 00:00:00  id:0x0x10000a161 [System: PrevIdle DeclUser kDisp]\n\
+                 #SAMPLE 2026-11-08 22:58:00 +0800 mah=3400 max=3913 pct=87 ac=0\n\
+                 2026-11-08 23:00:00 +0800 Sleep               \tEntering DarkWake state due to 'Clamshell Sleep':TCPKeepAlive=active Using Batt (Charge:87%) 1205 secs\n\
+                 2026-11-08 23:20:00 +0800 Assertions          \tPID 6161(caffeinate) Released PreventUserIdleSystemSleep \"caffeinate command-line tool\" 00:25:00  id:0x0x10000a161 [System: PrevIdle DeclUser kDisp]\n\
+                 2026-11-08 23:20:05 +0800 Sleep               \tEntering Sleep state due to 'Clamshell Sleep':TCPKeepAlive=active Using Batt (Charge:86%) 13195 secs\n\
+                 2026-11-09 03:00:00 +0800 DarkWake            \tDarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:85%) 60 secs\n\
+                 #SAMPLE 2026-11-09 03:00:01 +0800 mah=3340 max=3913 pct=85 ac=0\n\
+                 #SAMPLE 2026-11-09 03:00:59 +0800 mah=3300 max=3913 pct=84 ac=0\n\
+                 2026-11-09 03:01:00 +0800 Sleep               \tEntering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:84%) 14340 secs\n\
+                 2026-11-09 07:00:00 +0800 Wake                \tWake from Deep Idle [CDNVA] : due to smc.sysState.Wake(0x70070000) lid SMC.OutboxNotEmpty/UserActivity Assertion Using Batt (Charge:84%)\n\
+                 #SAMPLE 2026-11-09 07:00:02 +0800 mah=3280 max=3913 pct=84 ac=0\n";
+    let (conn, l) = run(&[night], |_| {});
+    let n = l.nights.last().unwrap();
+    assert_eq!(n.top_cause, "assertion:caffeinate");
+    assert_eq!(cause(&conn, "powernap"), Some((40, false)));
+    assert_eq!(cause(&conn, "assertion:caffeinate"), Some((36, true)));
+    // Its clean stretch after the 03:00 wake counts for the next night, not for itself.
+    assert_eq!((n.baseline.source, l.baseline.source), ("default", "clean"));
+    assert_eq!(
+        n.timeline[2].1,
+        "Split estimated: baseline sleep 31 mAh at 4.0 mAh/h (default guess, not measured yet, est.); unexplained 13 mAh (11%)."
+    );
+}
+
+#[test]
+fn bluetooth_night() {
+    // 47 wifibt DarkWakes of 10 s. The other nights (2 clean) are too few for a fitted
+    // DarkWake rate, so the wakes are priced at the default rate: 14 mAh, with 37 mAh
+    // unexplained. Only 7.8 min, but 47 logged wakes is not a quiet log: Bluetooth is named.
+    let (conn, l) = run(&[CLEAN, BLUETOOTH], |_| {});
+    let (top, headline, drop, ..) = latest(&conn);
+    assert_eq!((top.as_str(), drop), ("bluetooth", 130));
+    assert_eq!(
+        headline,
+        "You lost 3% (130 mAh) overnight. Mostly Bluetooth / Wi-Fi chip wakes. 28% is unexplained."
+    );
+    assert_eq!(cause(&conn, "unexplained"), Some((37, false)));
+    assert_eq!(cause(&conn, "bluetooth"), Some((14, true)));
+    // wifibt wins over the P (Power Nap) flag these DarkWake lines also carry.
+    assert_eq!(cause(&conn, "powernap"), None);
+    let n = l.nights.last().unwrap();
+    assert_eq!(n.bucket("bluetooth").unwrap().count, 47);
+    assert!(
+        n.timeline
+            .iter()
+            .any(|(_, t)| t.starts_with("Fix: turn Bluetooth off before closing the lid")),
+        "{:?}",
+        n.timeline
+    );
+}
+
+#[test]
+fn two_causes_the_larger_wins() {
+    let (conn, l) = run(&[CLEAN, TWO_CAUSES], |_| {});
+    let (top, headline, drop, ..) = latest(&conn);
+    assert_eq!((top.as_str(), drop), ("assertion:caffeinate", 197));
+    assert_eq!(
+        headline,
+        "You lost 5% (197 mAh) overnight. Mostly caffeinate holding it awake."
+    );
+    assert_eq!(cause(&conn, "assertion:caffeinate"), Some((97, false)));
+    // Power Nap woke it 27 times but cost less (at the default rate, as the 2 other nights
+    // are too few for a fit): second, still in the causes table.
+    assert_eq!(cause(&conn, "powernap"), Some((36, true)));
+    let n = l.nights.last().unwrap();
+    assert_eq!(n.bucket("powernap").unwrap().count, 27);
+    assert_eq!(n.causes[1].cause, "assertion:caffeinate");
+    assert_eq!(n.causes[2].cause, "powernap");
+}
+
+#[test]
+fn cant_tell_night() {
+    let (conn, l) = run(&[CLEAN, CANT_TELL], |_| {});
+    let (top, headline, drop, measured, _) = latest(&conn);
+    assert_eq!((top.as_str(), drop, measured), ("cant_tell", 350, true));
+    assert_eq!(
+        headline,
+        "You lost 9% (350 mAh) overnight. Can't tell why from the logs."
+    );
+    assert_eq!(cause(&conn, "baseline"), Some((80, true)));
+    assert_eq!(cause(&conn, "unexplained"), Some((270, false)));
+    let n = l.nights.last().unwrap();
+    assert!(
+        n.timeline.iter().all(|(_, t)| !t.starts_with("Fix:")),
+        "{:?}",
+        n.timeline
+    );
+    assert_eq!(
+        n.timeline.last().unwrap().1,
+        "No fix to suggest: macOS logged no wake or hold covering the unexplained drain."
     );
 }
 

@@ -71,6 +71,8 @@ pub fn classify(iv: &Interval, sched: &[i64], holds: &[Hold]) -> String {
     let r = iv.reason.as_str();
     // Not woken by a reason (stayed up while trying to sleep, or a full wake), or the DarkWake
     // that starts the user's own wake (lid, power button): time awake, not a background wake.
+    // shortcut: only DarkWakes are matched to the schedule, so a scheduled wake that macOS
+    // makes a full Wake is "awake", not "scheduled". Unverified which one a lid-closed Mac does.
     if !woke || is_user_wake(r) {
         return "awake".into();
     }

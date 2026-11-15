@@ -1,0 +1,73 @@
+# SYNTHETIC fixture: hand-made in the exact `pmset -g log` line format, but on battery
+# ("Using Batt"). NOT captured from a real Mac; the real log (pmset_log.txt) has no battery
+# nights. "#SAMPLE <ts> mah= max= pct= ac=" lines stand in for IOKit battery samples; the
+# pmset parser skips them like any line without a leading timestamp.
+# Two causes at once (Nov 7): caffeinate keeps the Mac in DarkWake for 1 h after lid close
+# (97 mAh, measured), then 27 rtc/Maintenance (Power Nap) DarkWakes of 45 s (priced by
+# rate). caffeinate costs more, so it is the top cause; 197 mAh in all.
+2026-11-07 18:00:00 +0800 Wake                	Wake from Deep Idle [CDNVA] : due to smc.sysState.Wake(0x70070000) lid SMC.OutboxNotEmpty/UserActivity Assertion Using Batt (Charge:82%)
+2026-11-07 22:55:00 +0800 Assertions          	PID 5151(caffeinate) Created PreventUserIdleSystemSleep "caffeinate command-line tool" 00:00:00  id:0x0x10000a151 [System: PrevIdle DeclUser kDisp]
+#SAMPLE 2026-11-07 22:58:00 +0800 mah=3105 max=3913 pct=79 ac=0
+2026-11-07 23:00:00 +0800 Sleep               	Entering DarkWake state due to 'Clamshell Sleep':TCPKeepAlive=active Using Batt (Charge:79%) 3605 secs
+#SAMPLE 2026-11-07 23:00:30 +0800 mah=3100 max=3913 pct=79 ac=0
+2026-11-08 00:00:00 +0800 Assertions          	PID 5151(caffeinate) Released PreventUserIdleSystemSleep "caffeinate command-line tool" 01:05:00  id:0x0x10000a151 [System: PrevIdle DeclUser kDisp]
+#SAMPLE 2026-11-08 00:00:04 +0800 mah=3003 max=3913 pct=77 ac=0
+2026-11-08 00:00:05 +0800 Sleep               	Entering Sleep state due to 'Clamshell Sleep':TCPKeepAlive=active Using Batt (Charge:77%) 895 secs
+2026-11-08 00:15:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:77%) 45 secs
+2026-11-08 00:15:00 +0800 WakeDetails         	DriverReason:NUB.SPMI0Sw3IRQ - DriverDetails:
+2026-11-08 00:15:00 +0800 com.apple.sleepservices.sessionStarted	SleepService: window begins with cap time=180 secs
+2026-11-08 00:15:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:77%) 855 secs
+2026-11-08 00:30:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:77%) 45 secs
+2026-11-08 00:30:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:77%) 855 secs
+2026-11-08 00:45:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:77%) 45 secs
+2026-11-08 00:45:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:77%) 855 secs
+2026-11-08 01:00:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:77%) 45 secs
+2026-11-08 01:00:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:77%) 855 secs
+2026-11-08 01:15:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:76%) 45 secs
+2026-11-08 01:15:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:76%) 855 secs
+2026-11-08 01:30:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:76%) 45 secs
+2026-11-08 01:30:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:76%) 855 secs
+2026-11-08 01:45:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:76%) 45 secs
+2026-11-08 01:45:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:76%) 855 secs
+2026-11-08 02:00:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:76%) 45 secs
+2026-11-08 02:00:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:76%) 855 secs
+2026-11-08 02:15:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:76%) 45 secs
+2026-11-08 02:15:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:76%) 855 secs
+2026-11-08 02:30:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:76%) 45 secs
+2026-11-08 02:30:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:76%) 855 secs
+2026-11-08 02:45:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:76%) 45 secs
+2026-11-08 02:45:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:76%) 855 secs
+2026-11-08 03:00:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:76%) 45 secs
+2026-11-08 03:00:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:76%) 855 secs
+2026-11-08 03:15:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:76%) 45 secs
+2026-11-08 03:15:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:76%) 855 secs
+2026-11-08 03:30:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:76%) 45 secs
+2026-11-08 03:30:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:76%) 855 secs
+2026-11-08 03:45:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:75%) 45 secs
+2026-11-08 03:45:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:75%) 855 secs
+2026-11-08 04:00:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:75%) 45 secs
+2026-11-08 04:00:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:75%) 855 secs
+2026-11-08 04:15:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:75%) 45 secs
+2026-11-08 04:15:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:75%) 855 secs
+2026-11-08 04:30:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:75%) 45 secs
+2026-11-08 04:30:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:75%) 855 secs
+2026-11-08 04:45:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:75%) 45 secs
+2026-11-08 04:45:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:75%) 855 secs
+2026-11-08 05:00:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:75%) 45 secs
+2026-11-08 05:00:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:75%) 855 secs
+2026-11-08 05:15:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:75%) 45 secs
+2026-11-08 05:15:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:75%) 855 secs
+2026-11-08 05:30:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:75%) 45 secs
+2026-11-08 05:30:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:75%) 855 secs
+2026-11-08 05:45:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:75%) 45 secs
+2026-11-08 05:45:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:75%) 855 secs
+2026-11-08 06:00:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:74%) 45 secs
+2026-11-08 06:00:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:74%) 855 secs
+2026-11-08 06:15:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:74%) 45 secs
+2026-11-08 06:15:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:74%) 855 secs
+2026-11-08 06:30:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:74%) 45 secs
+2026-11-08 06:30:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:74%) 855 secs
+2026-11-08 06:45:00 +0800 DarkWake            	DarkWake from Deep Idle [CDNPB] : due to NUB.SPMI0Sw3IRQ nub-spmi.0x02 rtc/Maintenance Using Batt (Charge:74%) 45 secs
+2026-11-08 06:45:45 +0800 Sleep               	Entering Sleep state due to 'Maintenance Sleep':TCPKeepAlive=active Using Batt (Charge:74%) 855 secs
+2026-11-08 07:00:00 +0800 Wake                	Wake from Deep Idle [CDNVA] : due to smc.sysState.Wake(0x70070000) lid SMC.OutboxNotEmpty/UserActivity Assertion Using Batt (Charge:74%)
+#SAMPLE 2026-11-08 07:00:02 +0800 mah=2903 max=3913 pct=74 ac=0

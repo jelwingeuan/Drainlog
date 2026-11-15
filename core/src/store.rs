@@ -31,9 +31,12 @@ pub const SCHEMA: &str = r#"
 -- nights      one row per on-battery night (lid/idle sleep -> user wake, >= 2 h).
 --             measured 1 = drop_mah from IOKit samples, 0 = coarse (Charge % x max_mah).
 --             estimated 1 = some part of the split is an estimate. unexplained_mah may be < 0.
---             timeline = JSON [{"ts": int or null, "text": str}].
+--             timeline = JSON [{"ts": int or null, "text": str}]. Each night is priced with a
+--             baseline built from the other nights only; baseline_calibrated is that one's.
+--             top_cause = a causes.cause, 'normal', or 'cant_tell'.
 -- causes      per-night buckets including 'baseline' and 'unexplained';
---             sum(mah) per night == nights.drop_mah exactly. estimated 1 = priced by a rate.
+--             sum(mah) per night == nights.drop_mah exactly. estimated 1 = priced by a rate,
+--             or named top cause while unexplained is the largest part.
 -- baseline    one row (id 1). mah_per_h = sleep drain, source clean | fit | default;
 --             calibrated 1 once clean_nights >= 2. darkwake_mah_per_s source fit | default.
 -- fixes       fixes the user applied (Stage 2; empty for now).
@@ -270,7 +273,7 @@ fn save(conn: &Connection, l: &Ledger, now: i64) -> Result<()> {
                 n.unexplained_pct(),
                 n.top_cause,
                 n.causes.iter().any(|c| c.estimated),
-                b.calibrated,
+                n.baseline.calibrated,
                 n.headline,
                 serde_json::Value::from(timeline).to_string(),
             ])?;

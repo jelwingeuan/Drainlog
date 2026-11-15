@@ -19,6 +19,12 @@ const WAKE_TOL: i64 = 60;
 /// shortcut: a full wake this long with no user-wake line (e.g. the lid opened during a
 /// notification wake) is treated as the user being back; it ends the night.
 const LONG_AWAKE_S: i64 = 1800;
+/// A night whose drop is mostly unexplained is "cant_tell" only when its log is quiet: under
+/// QUIET_S of activity (DarkWake, held awake, or awake with the lid closed) and under
+/// QUIET_EVENTS wakes or holds. Otherwise its logged causes are named.
+/// shortcut: both limits are picked by hand, not checked against real nights.
+const QUIET_S: i64 = 600;
+const QUIET_EVENTS: i64 = 10;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum State {
@@ -83,8 +89,11 @@ pub struct Night {
     pub wake_reason: String,
     /// "baseline" first, attributed buckets largest first, "unexplained" last.
     pub causes: Vec<Bucket>,
-    /// A cause key, or "normal".
+    /// A cause key, "normal", or "cant_tell" (unexplained is the largest part after baseline
+    /// and the log is quiet: under `QUIET_S` and `QUIET_EVENTS`).
     pub top_cause: String,
+    /// What the night was priced with: built from the other nights, never from itself.
+    pub baseline: Baseline,
     pub notes: Vec<String>,
     pub headline: String,
     pub timeline: Vec<(Option<i64>, String)>,
@@ -133,6 +142,8 @@ pub struct Baseline {
 pub struct Ledger {
     pub intervals: Vec<Interval>,
     pub nights: Vec<Night>,
+    /// From every night: the best guess for the next one. Each night in `nights` is priced
+    /// with its own `Night::baseline` instead.
     pub baseline: Baseline,
     /// Night-shaped spans skipped because some of it was on AC power.
     pub skipped_ac: usize,
@@ -294,6 +305,34 @@ fn median(mut v: Vec<f64>) -> f64 {
     }
 }
 
+/// The baseline from every night's clean stretches and fit row except night `skip`'s.
+fn calibrate(stretches: &[Vec<f64>], rows: &[(f64, f64, f64)], skip: Option<usize>) -> Baseline {
+    let others: Vec<usize> = (0..rows.len()).filter(|&i| Some(i) != skip).collect();
+    let rates: Vec<f64> = others
+        .iter()
+        .flat_map(|&i| stretches[i].iter().copied())
+        .collect();
+    let clean_nights = others.iter().filter(|&&i| !stretches[i].is_empty()).count();
+    let rows: Vec<_> = others.iter().map(|&i| rows[i]).collect();
+    let fitted = fit(&rows);
+    let (mah_per_h, source) = match fitted {
+        _ if !rates.is_empty() => (median(rates), "clean"),
+        Some((a, _)) => (a, "fit"),
+        None => (DEFAULT_SLEEP_MAH_H, "default"),
+    };
+    let (dark_mah_per_s, dark_source) =
+        fitted.map_or((DEFAULT_DARK_MAH_S, "default"), |(_, b)| (b, "fit"));
+    Baseline {
+        mah_per_h,
+        source,
+        clean_nights,
+        calibrated: clean_nights >= 2,
+        dark_mah_per_s,
+        dark_source,
+        nights_fitted: if fitted.is_some() { rows.len() } else { 0 },
+    }
+}
+
 /// `events` and `asserts` sorted by ts, `samples` sorted by ts.
 pub fn build(events: &[Event], samples: &[Sample], asserts: &[Assertion], now: i64) -> Ledger {
     let mut ivs = intervals(events, now);
@@ -319,21 +358,19 @@ pub fn build(events: &[Event], samples: &[Sample], asserts: &[Assertion], now: i
         }
     }
 
-    // Baseline: measured mAh/h of clean sleep stretches (one asleep interval >= 1 h, so no
-    // DarkWake inside, with a sample at each end).
-    let (mut rates, mut clean_nights) = (Vec::new(), 0);
-    for (s, e, _) in &spans {
-        let before = rates.len();
-        for iv in ivs[*s..*e]
-            .iter()
-            .filter(|iv| iv.state == State::Asleep && iv.end - iv.start >= MIN_CLEAN_S)
-        {
-            if let Some((a, b)) = bounds(samples, iv.start, iv.end, STRETCH_TOL) {
-                rates.push((a.mah - b.mah) as f64 * 3600.0 / (b.ts - a.ts) as f64);
-            }
-        }
-        clean_nights += usize::from(rates.len() > before);
-    }
+    // Per night: the measured mAh/h of its clean sleep stretches (one asleep interval >= 1 h,
+    // so no DarkWake inside, with a sample at each end), and its row for the fit.
+    let stretches: Vec<Vec<f64>> = spans
+        .iter()
+        .map(|(s, e, _)| {
+            ivs[*s..*e]
+                .iter()
+                .filter(|iv| iv.state == State::Asleep && iv.end - iv.start >= MIN_CLEAN_S)
+                .filter_map(|iv| bounds(samples, iv.start, iv.end, STRETCH_TOL))
+                .map(|(a, b)| (a.mah - b.mah) as f64 * 3600.0 / (b.ts - a.ts) as f64)
+                .collect()
+        })
+        .collect();
     let rows: Vec<_> = spans
         .iter()
         .map(|(s, e, d)| {
@@ -341,27 +378,16 @@ pub fn build(events: &[Event], samples: &[Sample], asserts: &[Assertion], now: i
             (asleep as f64 / 3600.0, other as f64, d.mah as f64)
         })
         .collect();
-    let fitted = fit(&rows);
-    let (mah_per_h, source) = match fitted {
-        _ if !rates.is_empty() => (median(rates), "clean"),
-        Some((a, _)) => (a, "fit"),
-        None => (DEFAULT_SLEEP_MAH_H, "default"),
-    };
-    let (dark_mah_per_s, dark_source) =
-        fitted.map_or((DEFAULT_DARK_MAH_S, "default"), |(_, b)| (b, "fit"));
-    let baseline = Baseline {
-        mah_per_h,
-        source,
-        clean_nights,
-        calibrated: clean_nights >= 2,
-        dark_mah_per_s,
-        dark_source,
-        nights_fitted: if fitted.is_some() { rows.len() } else { 0 },
-    };
+    let baseline = calibrate(&stretches, &rows, None);
 
+    // A night never calibrates itself: each is priced from the other nights only.
     let nights = spans
         .into_iter()
-        .map(|(s, e, d)| price(&mut ivs, s, e, d, &baseline, &sched, &holds, samples))
+        .enumerate()
+        .map(|(i, (s, e, d))| {
+            let base = calibrate(&stretches, &rows, Some(i));
+            price(&mut ivs, s, e, d, &base, &sched, &holds, samples)
+        })
         .collect();
     Ledger {
         intervals: ivs,
@@ -386,6 +412,8 @@ fn price(
     let clamshell = ivs[s].reason == "Clamshell Sleep";
     let wake_reason = ivs[e].reason.clone();
     let mut asleep_s = 0;
+    // Logged wakes plus intervals held up by an assertion.
+    let mut events = 0;
     // (cause, mAh, seconds, wakes, estimated)
     let mut acc: Vec<(String, f64, i64, i64, bool)> = Vec::new();
     for iv in &mut ivs[s..e] {
@@ -398,6 +426,7 @@ fn price(
             continue;
         }
         iv.cause = causes::classify(iv, sched, holds);
+        events += i64::from(!iv.via_sleep || iv.cause.starts_with("assertion:"));
         let measured =
             bounds(samples, iv.start, iv.end, WAKE_TOL).map(|(a, b)| (a.mah - b.mah) as f64);
         iv.measured = measured.is_some();
@@ -438,10 +467,31 @@ fn price(
     attributed.sort_by_key(|b| -b.mah);
     let base_mah = (asleep_s as f64 / 3600.0 * base.mah_per_h).round() as i64;
     let unexplained = d.mah - base_mah - attributed.iter().map(|b| b.mah).sum::<i64>();
-    let top_cause = attributed
-        .first()
-        .filter(|b| d.mah > 0 && b.mah * 10 >= d.mah)
-        .map_or("normal".to_string(), |b| b.cause.clone());
+    // Unexplained is the largest part after baseline and 15%+ of the drop.
+    let unexplained_wins = d.mah > 0
+        && unexplained * 100 >= d.mah * 15
+        && attributed.first().is_none_or(|b| unexplained >= b.mah);
+    // Every non-asleep second: DarkWake, held awake, or awake with the lid closed.
+    let active: i64 = attributed.iter().map(|b| b.seconds).sum();
+    // Uncalibrated, the mAh split leans on default rates: rank by logged time instead.
+    let top = if base.calibrated {
+        attributed.first()
+    } else {
+        attributed.iter().max_by_key(|b| (b.seconds, b.mah))
+    };
+    let top_cause = match top {
+        _ if unexplained_wins && active < QUIET_S && events < QUIET_EVENTS => {
+            "cant_tell".to_string()
+        }
+        Some(b) if unexplained_wins || (d.mah > 0 && b.mah * 10 >= d.mah) => b.cause.clone(),
+        _ => "normal".to_string(),
+    };
+    // Named although most of the drop is unexplained: its share is an estimate.
+    if unexplained_wins {
+        for b in attributed.iter_mut().filter(|b| b.cause == top_cause) {
+            b.estimated = true;
+        }
+    }
 
     // A holder that overlapped the night by 15+ min but kept it up < 5 min (e.g. only the
     // 1 s DarkWake at lid close): the OS slept anyway.
@@ -484,6 +534,7 @@ fn price(
         wake_reason,
         causes,
         top_cause,
+        baseline: base.clone(),
         notes,
         headline: String::new(),
         timeline: Vec::new(),

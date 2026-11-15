@@ -41,7 +41,7 @@ fn base_label(b: &Baseline) -> &'static str {
         ("clean", true) => "calibrated",
         ("clean", false) => "1 clean night, not calibrated yet",
         ("fit", _) => "fitted, not calibrated yet",
-        _ => "default guess, not calibrated yet",
+        _ => "default guess, not measured yet",
     }
 }
 
@@ -56,6 +56,7 @@ pub fn clock(ts: i64) -> String {
 pub fn fill(n: &mut Night, base: &Baseline) {
     let drop = n.drop_mah;
     let up = n.unexplained_pct().round() as i64;
+    let cant_tell = n.top_cause == "cant_tell";
     let top = n.bucket(&n.top_cause).cloned();
     let lost = match (drop > 0, n.measured) {
         (false, _) => format!("No battery lost overnight ({drop} mAh)."),
@@ -66,13 +67,12 @@ pub fn fill(n: &mut Night, base: &Baseline) {
         ),
     };
     let verdict = match &top {
-        None => "Normal sleep drain.".to_string(),
-        Some(t) if n.unexplained_mah() > t.mah && up > 15 => {
-            format!("Largest known cause: {}.", t.label)
-        }
         Some(t) => format!("Mostly {}.", t.label),
+        None if cant_tell && !base.calibrated => "Can't tell yet: baseline not measured.".into(),
+        None if cant_tell => "Can't tell why from the logs.".to_string(),
+        None => "Normal sleep drain.".to_string(),
     };
-    let tail = if up.abs() > 15 {
+    let tail = if up.abs() > 15 && !cant_tell {
         format!(
             " {up}% is unexplained{}.",
             if base.calibrated {
@@ -135,13 +135,18 @@ pub fn fill(n: &mut Night, base: &Baseline) {
     ));
     t.push((
         None,
-        format!(
-            "Baseline sleep {} mAh at {:.1} mAh/h ({}, est.); unexplained {} mAh ({up}%).",
+        cap(&format!(
+            "{}baseline sleep {} mAh at {:.1} mAh/h ({}, est.); unexplained {} mAh ({up}%).",
+            if base.calibrated {
+                ""
+            } else {
+                "split estimated: "
+            },
             base_b.mah,
             base.mah_per_h,
             base_label(base),
             n.unexplained_mah()
-        ),
+        )),
     ));
     t.push((
         Some(n.end),
@@ -158,6 +163,11 @@ pub fn fill(n: &mut Night, base: &Baseline) {
     ));
     match top.filter(|c| !c.fix.is_empty()) {
         Some(c) => t.push((None, format!("Fix: {} (undo: {}).", c.fix, c.undo))),
+        None if cant_tell => t.push((
+            None,
+            "No fix to suggest: macOS logged no wake or hold covering the unexplained drain."
+                .to_string(),
+        )),
         None => t.extend(n.notes.first().map(|note| (None, note.clone()))),
     }
     n.timeline = t;
