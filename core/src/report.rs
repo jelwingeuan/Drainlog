@@ -67,7 +67,9 @@ pub fn fill(n: &mut Night, base: &Baseline) {
         ),
     };
     let verdict = match &top {
-        Some(t) => format!("Mostly {}.", t.label),
+        // "Mostly" only when it really is most of the drop.
+        Some(t) if t.mah * 2 >= drop => format!("Mostly {}.", t.label),
+        Some(t) => format!("Largest known cause: {}.", t.label),
         None if cant_tell && !base.calibrated => "Can't tell yet: baseline not measured.".into(),
         None if cant_tell => "Can't tell why from the logs.".to_string(),
         None => "Normal sleep drain.".to_string(),

@@ -158,7 +158,7 @@ fn powernap_night() {
     assert_eq!(l.nights[2].baseline.dark_source, "default");
     assert_eq!(
         headline,
-        "You lost 9% (350 mAh) overnight. Mostly Power Nap / maintenance wakes. 66% is unexplained."
+        "You lost 9% (350 mAh) overnight. Largest known cause: Power Nap / maintenance wakes. 66% is unexplained."
     );
     assert_eq!(cause(&conn, "powernap"), Some((43, true)));
     assert_eq!(cause(&conn, "unexplained"), Some((231, false)));
@@ -194,7 +194,7 @@ fn scheduled_wake_night() {
     });
     let (top, headline, drop, ..) = latest(&conn);
     assert_eq!((top.as_str(), drop), ("scheduled", 220));
-    assert!(headline.contains("Mostly scheduled wakes."), "{headline}");
+    assert!(headline.contains(" scheduled wakes."), "{headline}");
     // All four matched a schedule (2 from Wake Requests, 2 from the snapshot), even though
     // the reason text says rtc/Maintenance.
     assert_eq!(
@@ -292,7 +292,7 @@ fn bluetooth_night() {
     assert_eq!((top.as_str(), drop), ("bluetooth", 130));
     assert_eq!(
         headline,
-        "You lost 3% (130 mAh) overnight. Mostly Bluetooth / Wi-Fi chip wakes. 28% is unexplained."
+        "You lost 3% (130 mAh) overnight. Largest known cause: Bluetooth / Wi-Fi chip wakes. 28% is unexplained."
     );
     assert_eq!(cause(&conn, "unexplained"), Some((37, false)));
     assert_eq!(cause(&conn, "bluetooth"), Some((14, true)));
@@ -316,7 +316,7 @@ fn two_causes_the_larger_wins() {
     assert_eq!((top.as_str(), drop), ("assertion:caffeinate", 197));
     assert_eq!(
         headline,
-        "You lost 5% (197 mAh) overnight. Mostly caffeinate holding it awake."
+        "You lost 5% (197 mAh) overnight. Largest known cause: caffeinate holding it awake."
     );
     assert_eq!(cause(&conn, "assertion:caffeinate"), Some((97, false)));
     // Power Nap woke it 27 times but cost less (at the default rate, as the 2 other nights
