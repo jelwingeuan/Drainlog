@@ -1,0 +1,533 @@
+<title>Drainlog Mockups</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: a quiet review sheet. Each mockup sits on a soft desktop "wallpaper" tile, light above dark, then the HIG review. */
+:root {
+  --page: #eef0f4; --page-ink: #1d1d1f; --page-ink-2: #4f5259; --page-rule: rgba(20,30,60,.12);
+  --page-card: #ffffff; --page-accent: #0a64d6;
+  --wall-light: linear-gradient(160deg, #c9d6ea 0%, #e6dfe9 55%, #efe7dc 100%);
+  --wall-dark: linear-gradient(160deg, #1b2236 0%, #2a2333 55%, #2e2722 100%);
+  --sys: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --sys-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --sys-rounded: ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, sans-serif;
+  --ui-size: 13px;
+  --spring: ease-out;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --page: #121316; --page-ink: #f2f2f5; --page-ink-2: #a9acb4; --page-rule: rgba(255,255,255,.12);
+  --page-card: #1c1d21; --page-accent: #5aa9ff; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --page: #121316; --page-ink: #f2f2f5; --page-ink-2: #a9acb4; --page-rule: rgba(255,255,255,.12);
+  --page-card: #1c1d21; --page-accent: #5aa9ff; color-scheme: dark; }
+:root.large-text { --ui-size: 17px; }
+
+body { background: var(--page); color: var(--page-ink); font-family: var(--sys); font-size: 15px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased; }
+.sheet { max-width: 1040px; margin: 0 auto; padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 56px; }
+.intro { display: grid; gap: 14px; max-width: 66ch; }
+.intro h1 { font-family: var(--sys-display); font-size: 2rem; line-height: 1.1; letter-spacing: -0.02em; margin: 0; font-weight: 700; text-wrap: balance; }
+.intro p { margin: 0; color: var(--page-ink-2); }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; color: var(--page-ink-2); font-size: 0.875rem; }
+.seg { display: inline-flex; background: var(--page-rule); border-radius: 8px; padding: 2px; }
+.seg button { font: inherit; font-size: 0.8125rem; border: 0; background: transparent; color: var(--page-ink); padding: 4px 12px; border-radius: 6px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--page-card); box-shadow: 0 1px 2px rgba(0,0,0,.15); font-weight: 600; }
+:focus-visible { outline: 3px solid color-mix(in srgb, var(--page-accent) 60%, transparent); outline-offset: 2px; border-radius: 6px; }
+
+section.part { display: grid; gap: 20px; }
+.part-head { display: grid; gap: 6px; max-width: 70ch; }
+.part-head h2 { margin: 0; font-family: var(--sys-display); font-size: 1.375rem; letter-spacing: -0.01em; font-weight: 700; }
+.part-head p { margin: 0; color: var(--page-ink-2); }
+.variant { display: grid; gap: 8px; min-width: 0; }
+.variant > .cap { font-size: 0.8125rem; color: var(--page-ink-2); }
+.wall { border-radius: 14px; padding: clamp(10px, 3vw, 28px); min-width: 0; }
+.wall.light { background: var(--wall-light); }
+.wall.dark { background: var(--wall-dark); }
+.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 20px; }
+
+/* ───────── macOS system tokens (scoped per mockup theme) ───────── */
+.t-light {
+  --win: #ffffff; --side: rgba(236,236,240,.78); --side-solid: #ececf0; --chrome-edge: rgba(0,0,0,.14);
+  --label: rgba(0,0,0,.88); --label-2: rgba(0,0,0,.62); --label-3: rgba(0,0,0,.42);
+  --sep: rgba(0,0,0,.10); --fill: rgba(0,0,0,.045); --fill-2: rgba(0,0,0,.08);
+  --accent: #007aff; --accent-ink: #0064d1; --on-accent: #ffffff;
+  --indigo: #5856d6; --orange: #ff9500; --orange-ink: #c46a00; --teal: #30b0c7; --red: #ff3b30;
+  --asleep-band: rgba(88,86,214,.13); --dw-band: rgba(255,149,0,.20); --awake-band: rgba(48,176,199,.75);
+  --line: #1d1d1f; --pop: rgba(246,246,248,.82); --shadow: 0 0 0 .5px rgba(0,0,0,.18), 0 10px 30px rgba(0,0,0,.18), 0 2px 6px rgba(0,0,0,.08);
+  color-scheme: light;
+}
+.t-dark {
+  --win: #1e1e20; --side: rgba(44,44,48,.72); --side-solid: #2c2c30; --chrome-edge: rgba(255,255,255,.12);
+  --label: rgba(255,255,255,.90); --label-2: rgba(255,255,255,.64); --label-3: rgba(255,255,255,.42);
+  --sep: rgba(255,255,255,.10); --fill: rgba(255,255,255,.06); --fill-2: rgba(255,255,255,.10);
+  --accent: #0a84ff; --accent-ink: #4aa3ff; --on-accent: #ffffff;
+  --indigo: #7d7aff; --orange: #ff9f0a; --orange-ink: #ffb340; --teal: #40cbe0; --red: #ff453a;
+  --asleep-band: rgba(125,122,255,.17); --dw-band: rgba(255,159,10,.22); --awake-band: rgba(64,203,224,.80);
+  --line: #f5f5f7; --pop: rgba(40,40,44,.80); --shadow: 0 0 0 .5px rgba(255,255,255,.14), 0 0 0 1.5px rgba(0,0,0,.6), 0 14px 36px rgba(0,0,0,.5);
+  color-scheme: dark;
+}
+.mac { font-family: var(--sys); font-size: var(--ui-size); line-height: 1.35; color: var(--label); letter-spacing: -0.003em; }
+.mac button { font: inherit; color: inherit; }
+
+/* Window */
+.window { container-type: inline-size; background: var(--win); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden;
+  display: grid; grid-template-columns: auto minmax(0,1fr); min-height: 40em; }
+.sidebar { margin: 0.6em; margin-right: 0; border-radius: 10px; background: var(--side); backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%); box-shadow: inset 0 0 0 .5px var(--chrome-edge);
+  width: 13.5em; padding: 0.7em 0.55em; display: flex; flex-direction: column; gap: 0.15em; }
+.lights { display: flex; gap: 0.55em; padding: 0.15em 0.35em 1.1em; align-items: center; }
+.lights .stog { margin-left: auto; width: 1.9em; height: 1.6em; border: 0; border-radius: 6px; background: transparent; color: var(--label-2); display: grid; place-items: center; }
+.lights .stog svg { width: 1.15em; height: 1.15em; }
+.lights i { flex: none; width: 0.92em; height: 0.92em; border-radius: 50%; display: block; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.18); }
+.lights i:nth-child(1){ background:#ff5f57 } .lights i:nth-child(2){ background:#febc2e } .lights i:nth-child(3){ background:#28c840 }
+.side-item { display: flex; align-items: center; gap: 0.55em; padding: 0.36em 0.55em; border-radius: 6px; color: var(--label); }
+.side-item svg { width: 1.15em; height: 1.15em; flex: none; color: var(--accent); }
+.side-item.sel { background: var(--fill-2); font-weight: 600; }
+.side-foot { margin-top: auto; padding: 0.5em 0.55em 0.2em; color: var(--label-2); font-size: 0.85em; display: flex; gap: 0.45em; align-items: flex-start; }
+.side-foot svg { width: 1.1em; height: 1.1em; flex: none; margin-top: .1em; }
+
+.main { min-width: 0; display: flex; flex-direction: column; }
+.toolbar { display: flex; align-items: center; gap: 0.8em; padding: 1.05em 1.4em 0.8em; }
+.toolbar .ttl { display: grid; min-width: 0; }
+.toolbar .ttl b { font-size: 1.15em; font-weight: 700; letter-spacing: -0.01em; }
+.toolbar .ttl span { color: var(--label-2); font-size: 0.85em; }
+.toolbar .tools { margin-left: auto; display: flex; gap: 2px; background: var(--fill); border-radius: 999px; padding: 2px; }
+.tbtn { width: 2.1em; height: 1.9em; border: 0; border-radius: 999px; background: transparent; display: grid; place-items: center; cursor: default; }
+.tbtn svg { width: 0.95em; height: 0.95em; }
+.tbtn[aria-disabled="true"] { color: var(--label-3); }
+
+.content { padding: 0.4em 1.4em 1.6em; display: grid; gap: 1.6em; max-width: 46em; }
+.hero { display: grid; gap: 0.35em; }
+.hero-num { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.2em 0.7em; }
+.hero-num .big { font-family: var(--sys-rounded); font-size: 3.4em; line-height: 1; font-weight: 600; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.hero-num .mah { font-size: 1.15em; color: var(--label-2); font-variant-numeric: tabular-nums; display: inline-flex; align-items: center; gap: 0.5em; }
+.hero h3 { margin: 0; font-family: var(--sys-display); font-size: 1.55em; line-height: 1.2; font-weight: 600; letter-spacing: -0.015em; text-wrap: balance; }
+.hero p { margin: 0; color: var(--label-2); }
+
+.badge { display: inline-flex; align-items: center; gap: 0.3em; font-size: 0.85em; font-weight: 500; line-height: 1; padding: 0.3em 0.55em 0.32em; border-radius: 999px; white-space: nowrap; color: var(--label-2); letter-spacing: 0.01em; }
+.badge.m { background: var(--fill-2); }
+.badge.m::before { content: ""; width: 0.55em; height: 0.55em; border-radius: 50%; background: currentColor; }
+.badge.e { box-shadow: inset 0 0 0 1px var(--label-3); }
+.badge.e::before { content: "≈"; font-weight: 700; }
+.badge.u { box-shadow: inset 0 0 0 1px var(--label-3); }
+.badge.u::before { content: "?"; font-weight: 700; }
+.badge.n { box-shadow: inset 0 0 0 1px var(--label-3); background-image: none; border: 1px dashed var(--label-3); box-shadow: none; padding: calc(0.3em - 1px) calc(0.55em - 1px); }
+.badge.n::before { content: "–"; font-weight: 700; }
+
+.block { display: grid; gap: 0.6em; }
+.block-h { display: flex; align-items: baseline; gap: 0.6em; flex-wrap: wrap; }
+.block-h h4 { margin: 0; font-size: 1em; font-weight: 600; }
+.block-h .sub { color: var(--label-2); font-size: 0.9em; }
+
+/* Night chart */
+.chart { position: relative; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.axis { position: relative; height: 1.4em; color: var(--label-2); font-size: 0.8em; font-variant-numeric: tabular-nums; }
+.axis span { position: absolute; top: 0.3em; transform: translateX(-50%); white-space: nowrap; }
+.axis span:first-child { transform: none; } .axis span:last-child { transform: translateX(-100%); }
+.legend { display: flex; flex-wrap: wrap; gap: 0.4em 1.3em; color: var(--label-2); font-size: 0.88em; }
+.legend > span { display: inline-flex; align-items: center; gap: 0.45em; font-variant-numeric: tabular-nums; }
+.legend b { color: var(--label); font-weight: 500; }
+.sw { width: 0.85em; height: 0.85em; border-radius: 3px; display: inline-block; flex: none; }
+.sw.asleep { background: var(--asleep-band); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--indigo) 45%, transparent); }
+.sw.dw { background: repeating-linear-gradient(90deg, var(--orange) 0 2px, transparent 2px 4px); box-shadow: inset 0 0 0 1px var(--orange); }
+.glab { position: absolute; right: 0.2em; transform: translateY(-115%); color: var(--label-2); font-size: 0.8em; font-variant-numeric: tabular-nums; pointer-events: none; }
+.alab { position: absolute; top: 0.15em; transform: translateX(-50%); font-size: 0.8em; font-weight: 600; color: var(--label); background: var(--win); border-radius: 4px; padding: 0 0.3em; box-shadow: 0 0 0 .5px var(--sep); white-space: nowrap; }
+.sw.awake { background: var(--awake-band); }
+.sw.batt { height: 2px; border-radius: 1px; background: var(--line); }
+
+/* Incidents */
+.incidents { list-style: none; margin: 0; padding: 0; display: grid; border-top: .5px solid var(--sep); }
+.incidents li { display: grid; grid-template-columns: 5.2em minmax(0,1fr); gap: 0.2em 0.9em; padding: 0.7em 0; border-bottom: .5px solid var(--sep); }
+.incidents time { color: var(--label-2); font-variant-numeric: tabular-nums; padding-top: 0.05em; }
+.incidents .what { font-weight: 500; }
+.incidents .why { color: var(--label-2); font-size: 0.93em; }
+.incidents li.fix { grid-template-columns: 5.2em minmax(0,1fr) auto; align-items: center; }
+.incidents li.fix .tag { color: var(--accent-ink); font-weight: 600; }
+.pbtn { border: 0; border-radius: 6px; padding: 0.3em 0.8em; background: var(--fill-2); box-shadow: inset 0 0 0 .5px var(--sep); white-space: nowrap; cursor: default; }
+.pbtn.primary { background: var(--accent); color: var(--on-accent); box-shadow: none; font-weight: 500; }
+
+/* Ledger */
+.ledger { border-radius: 10px; background: var(--fill); overflow: hidden; }
+.disclose { width: 100%; display: flex; align-items: center; gap: 0.6em; padding: 0.75em 0.9em; border: 0; background: transparent; text-align: left; cursor: pointer; }
+.disclose .chev { width: 0.75em; height: 0.75em; flex: none; color: var(--label-2); transition: transform .5s var(--spring); }
+.ledger.open .disclose .chev { transform: rotate(90deg); }
+.disclose b { font-weight: 600; }
+.disclose .hint { margin-left: auto; color: var(--label-2); font-size: 0.9em; }
+.more { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .5s var(--spring); }
+.ledger.open .more { grid-template-rows: 1fr; }
+.more > div { overflow: hidden; min-height: 0; }
+.row { display: grid; grid-template-columns: minmax(0,1fr) auto 5.6em; gap: 0.2em 0.8em; align-items: center; padding: 0.55em 0.9em; border-top: .5px solid var(--sep); }
+.row .nm { min-width: 0; display: grid; }
+.row .nm small { color: var(--label-2); font-size: 0.88em; }
+.row .val { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.row .val .pct { color: var(--label-2); margin-left: 0.5em; display: inline-block; min-width: 2.6em; }
+.row .lab { justify-self: end; }
+.row.child .nm { padding-left: 1.1em; }
+.row.grp .nm b { font-weight: 500; }
+.row.unx { background: color-mix(in srgb, var(--orange) 9%, transparent); }
+.row.unx .nm b { font-weight: 600; }
+.row.total .nm b, .row.total .val { font-weight: 600; }
+.row .pending { color: var(--label-2); font-style: normal; }
+
+.notice { display: flex; gap: 0.7em; align-items: flex-start; padding: 0.8em 0.9em; border-radius: 10px; background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.notice svg { width: 1.2em; height: 1.2em; flex: none; color: var(--accent); margin-top: 0.1em; }
+.notice b { font-weight: 600; display: block; }
+.notice span { color: var(--label-2); }
+
+/* Narrow window: icon-only sidebar (also what large text falls back to) */
+@container (max-width: 640px) {
+  .sidebar { width: auto; }
+  .side-item span, .side-foot span { display: none; }
+  .side-item { justify-content: center; padding: 0.5em; }
+  .lights { flex-direction: column; padding-inline: 0.55em; }
+  .lights .stog { margin-left: 0; }
+}
+@container (max-width: 470px) {
+  .row { grid-template-columns: minmax(0,1fr) auto; }
+  .row .lab { grid-column: 1 / -1; justify-self: start; }
+  .incidents li, .incidents li.fix { grid-template-columns: minmax(0,1fr); }
+  .incidents li.fix .pbtn { justify-self: start; }
+}
+
+/* Menu bar + popover */
+.desk { position: relative; border-radius: 14px; overflow: hidden; min-height: 37em; container-type: inline-size; }
+.desk.light { background: var(--wall-light); } .desk.dark { background: var(--wall-dark); }
+.menubar { display: flex; justify-content: flex-end; align-items: center; gap: 4px; height: 24px; padding: 0 10px; font-size: 13px;
+  background: color-mix(in srgb, var(--win) 55%, transparent); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); color: var(--label); }
+.mb { height: 20px; min-width: 26px; padding: 0 5px; display: grid; place-items: center; border-radius: 5px; border: 0; background: transparent; }
+.mb svg { width: 16px; height: 16px; }
+.mb.on { background: var(--fill-2); }
+.mb.clock { font-variant-numeric: tabular-nums; font-weight: 500; }
+.popwrap { position: absolute; top: 30px; right: 4.2em; width: min(22.5em, calc(100% - 1.2em)); }
+.pop { background: var(--pop); backdrop-filter: blur(40px) saturate(180%); -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-radius: 14px; box-shadow: var(--shadow); padding: 0.95em 1em 0.6em; display: grid; gap: 0.85em; transform-origin: 85% 0;
+  transition: transform .5s var(--spring), opacity .2s ease, filter .3s ease; }
+.pop.closed { transform: scale(.92) translateY(-0.4em); opacity: 0; filter: blur(4px); pointer-events: none; }
+.pop .head { display: grid; gap: 0.2em; }
+.pop .numline { display: flex; align-items: baseline; gap: 0.2em 0.6em; flex-wrap: wrap; }
+.pop .numline .big { font-family: var(--sys-rounded); font-size: 2.3em; font-weight: 600; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.pop .numline .mah { color: var(--label-2); font-variant-numeric: tabular-nums; display: inline-flex; gap: 0.45em; align-items: center; }
+.pop .sent { font-weight: 600; font-size: 1.08em; }
+.pop .mini .axis { font-size: 0.75em; }
+.pop .sect { display: grid; gap: 0.5em; padding-top: 0.75em; border-top: .5px solid var(--sep); }
+.cause { display: grid; grid-template-columns: 1.9em minmax(0,1fr); gap: 0.15em 0.65em; align-items: start; }
+.cause .ic { width: 1.9em; height: 1.9em; border-radius: 7px; display: grid; place-items: center; background: color-mix(in srgb, var(--orange) 18%, transparent); color: var(--orange-ink); }
+.cause .ic.fixic { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent-ink); }
+.cause .ic svg { width: 1.05em; height: 1.05em; }
+.cause b { font-weight: 600; } .cause small { color: var(--label-2); font-size: 0.9em; display: flex; flex-wrap: wrap; gap: 0.4em; align-items: center; }
+.cause .act { grid-column: 2; justify-self: start; margin-top: 0.3em; }
+.menurow { display: flex; align-items: center; gap: 0.5em; padding: 0.4em 0.5em; margin: 0 -0.5em; border-radius: 6px; border: 0; background: transparent; width: calc(100% + 1em); text-align: left; cursor: pointer; }
+.menurow:hover { background: var(--accent); color: var(--on-accent); }
+.menurow:hover kbd { color: inherit; }
+.menurow kbd { margin-left: auto; font: inherit; color: var(--label-2); }
+.menurow.dim { color: var(--label-2); }
+
+/* Review */
+.review { display: grid; gap: 14px; }
+.findings { display: grid; gap: 0; border-top: 1px solid var(--page-rule); }
+.finding { display: grid; grid-template-columns: 6.5rem minmax(0,1fr) minmax(0,1fr); gap: 6px 22px; padding: 14px 0; border-bottom: 1px solid var(--page-rule); }
+.finding .sev { font-size: 0.8125rem; font-weight: 600; color: var(--page-ink-2); }
+.finding .sev.hi { color: #c2410c; } :root[data-theme="dark"] .finding .sev.hi { color: #fb923c; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .finding .sev.hi { color: #fb923c; } }
+.finding h3 { margin: 0 0 2px; font-size: 0.9375rem; font-weight: 600; }
+.finding p { margin: 0; color: var(--page-ink-2); font-size: 0.9375rem; }
+.finding .fix p { color: var(--page-ink); }
+.finding .fix::before { content: "Fix applied"; display: block; font-size: 0.8125rem; color: var(--page-ink-2); font-weight: 600; margin-bottom: 2px; }
+.finding .fix.kept::before { content: "Kept as is"; }
+@media (max-width: 720px) { .finding { grid-template-columns: minmax(0,1fr); } }
+.ask { background: var(--page-card); border-radius: 14px; padding: 22px 24px; display: grid; gap: 10px; box-shadow: 0 0 0 1px var(--page-rule); max-width: 70ch; }
+.ask h2 { margin: 0; font-size: 1.25rem; font-family: var(--sys-display); }
+.ask ul { margin: 0; padding-left: 1.2em; color: var(--page-ink-2); display: grid; gap: 4px; }
+.ask p { margin: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .disclose .chev, .more { transition: none; }
+  .pop { transition: opacity .15s linear; }
+  .pop.closed { transform: none; filter: none; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .t-light { --side: var(--side-solid); --pop: #f6f6f8; } .t-dark { --side: var(--side-solid); --pop: #2a2a2e; }
+  .sidebar, .pop, .menubar { backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+@media (prefers-contrast: more) {
+  .t-light { --label-2: rgba(0,0,0,.75); --label-3: rgba(0,0,0,.6); --sep: rgba(0,0,0,.3); }
+  .t-dark { --label-2: rgba(255,255,255,.8); --label-3: rgba(255,255,255,.6); --sep: rgba(255,255,255,.3); }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-moon" viewBox="0 0 20 20"><path d="M15.6 12.6A6.6 6.6 0 0 1 7.4 4.4a6.6 6.6 0 1 0 8.2 8.2Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12.2 3.2h3l-3 3.2h3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 20 20"><rect x="3" y="4.2" width="14" height="12.6" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 8h14M7 2.6v3M13 2.6v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-pat" viewBox="0 0 20 20"><path d="M4 16V10M8 16V5M12 16v-8M16 16v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-side" viewBox="0 0 20 20"><rect x="2.6" y="4" width="14.8" height="12" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7.6 4v12" stroke="currentColor" stroke-width="1.5"/><path d="M4.4 7h1.6M4.4 9.4h1.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 12 12"><path d="M4.2 2.2 8 6l-3.8 3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-left" viewBox="0 0 12 12"><path d="M7.8 2.2 4 6l3.8 3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-right" viewBox="0 0 12 12"><path d="M4.2 2.2 8 6l-3.8 3.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-dl" viewBox="0 0 20 20"><rect x="1.8" y="5.2" width="14.6" height="9.6" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M18.2 8.4v3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4.4 8.2l3 2.2 2.4-1.2 3.8 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-wake" viewBox="0 0 20 20"><path d="M10 3.2v2.2M10 14.6v2.2M3.2 10h2.2M14.6 10h2.2M5.2 5.2l1.5 1.5M13.3 13.3l1.5 1.5M5.2 14.8l1.5-1.5M13.3 6.7l1.5-1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="10" r="2.6" fill="currentColor"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 20 20"><path d="M12.8 3.4a4 4 0 0 0-4.6 5.3L3.6 13.3a1.6 1.6 0 0 0 2.3 2.3l4.6-4.6a4 4 0 0 0 5.3-4.6l-2.3 2.3-2.2-.4-.4-2.2Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+  <symbol id="i-info" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v4.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="10" cy="6.5" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 20 20"><path d="M2.8 7.6a10.4 10.4 0 0 1 14.4 0M5.4 10.3a6.6 6.6 0 0 1 9.2 0M8 13a2.8 2.8 0 0 1 4 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="15.6" r="1.1" fill="currentColor"/></symbol>
+  <symbol id="i-batt" viewBox="0 0 24 20"><rect x="1.5" y="5" width="18" height="10" rx="3" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".55"/><rect x="3.2" y="6.7" width="10.4" height="6.6" rx="1.6" fill="currentColor"/><path d="M21.4 8.4v3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".55"/></symbol>
+  <symbol id="i-search" viewBox="0 0 20 20"><circle cx="8.6" cy="8.6" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m12.4 12.4 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-ctrl" viewBox="0 0 20 20"><rect x="3" y="4" width="14" height="5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="6.5" cy="6.5" r="1.4" fill="currentColor"/><rect x="3" y="11" width="14" height="5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="13.5" cy="13.5" r="1.4" fill="currentColor"/></symbol>
+</svg>
+
+<main class="sheet">
+  <header class="intro">
+    <h1>Drainlog mockups for approval</h1>
+    <p>Two screens gate the SwiftUI build: the morning report window and the menu bar popover. Each is shown in light and dark appearance with one sample night: lid closed at 23:10 on 82%, opened at 07:20 on 68%.</p>
+    <p>The ledger and the popover respond to clicks. Text size switches every mockup between the default 13 pt and a larger size, to check the layout holds.</p>
+    <div class="controls" role="group" aria-label="Preview options">
+      <span>Text size</span>
+      <div class="seg" id="sizeSeg">
+        <button type="button" id="sz-default" aria-pressed="true" data-size="default">Default</button>
+        <button type="button" id="sz-large" aria-pressed="false" data-size="large">Large</button>
+      </div>
+      <span id="motionNote">Motion: springs</span>
+    </div>
+  </header>
+
+  <section class="part" aria-labelledby="h-report">
+    <div class="part-head">
+      <h2 id="h-report">1. Morning report</h2>
+      <p>One number and one sentence first, then the night as a chart, then what happened in a few lines. The ledger stays closed until asked for; the unexplained line shows either way.</p>
+    </div>
+    <div class="variant"><div class="cap">Light, ledger closed (how it opens each morning)</div>
+      <div class="wall light"><div class="mac t-light" data-report data-open="false"></div></div></div>
+    <div class="variant"><div class="cap">Dark, ledger open</div>
+      <div class="wall dark"><div class="mac t-dark" data-report data-open="true"></div></div></div>
+  </section>
+
+  <section class="part" aria-labelledby="h-precal">
+    <div class="part-head">
+      <h2 id="h-precal">1b. Before calibration</h2>
+      <p>Until Drainlog has seen one quiet closed-lid night, it cannot separate normal sleep drain. The baseline row says so, and that energy stays in unexplained instead of being guessed.</p>
+    </div>
+    <div class="pair">
+      <div class="variant"><div class="cap">Light</div><div class="wall light"><div class="mac t-light" data-precal></div></div></div>
+      <div class="variant"><div class="cap">Dark</div><div class="wall dark"><div class="mac t-dark" data-precal></div></div></div>
+    </div>
+  </section>
+
+  <section class="part" aria-labelledby="h-pop">
+    <div class="part-head">
+      <h2 id="h-pop">2. Menu bar popover</h2>
+      <p>Last night at a glance from the menu bar: the number, the sentence, a mini timeline, the top cause and one fix. Click the Drainlog icon in the menu bar to close and reopen it.</p>
+    </div>
+    <div class="pair">
+      <div class="variant"><div class="cap">Light</div><div class="mac t-light" data-pop></div></div>
+      <div class="variant"><div class="cap">Dark</div><div class="mac t-dark" data-pop></div></div>
+    </div>
+  </section>
+
+  <section class="part review" aria-labelledby="h-review">
+    <div class="part-head">
+      <h2 id="h-review">3. HIG review and fixes</h2>
+      <p id="reviewIntro">Reviewed with the apple-look skill against Apple's HIG pages for accessibility, color, dark mode, typography, sidebars, the menu bar, popovers, charts, materials and motion. Rating before fixes: Good, with two High findings. Both are fixed below. What already held up: system font and semantic label colours in both appearances, sidebar icons in the accent colour, a single accent for actions, spring motion anchored to its source and turned off under Reduce Motion, solid surfaces under Reduce Transparency, and stronger labels under Increase Contrast.</p>
+    </div>
+    <div class="findings" id="findings">
+      <div class="finding"><div class="sev hi">High</div><div><h3>DarkWake bands drowned the battery line</h3><p>62 full-height orange bars at 62% opacity filled most of the chart, so the line people came for was hard to follow. charts.md › Best practices: &ldquo;Too many grid lines can be visually overwhelming, distracting people from the data.&rdquo; The same goes for bands.</p></div><div class="fix"><p>DarkWake bands dropped to 20% opacity, and each wake also gets a solid tick in a thin lane along the bottom. The line reads first, the wakes second.</p></div></div>
+      <div class="finding"><div class="sev hi">High</div><div><h3>Awake and DarkWake told apart by colour only</h3><p>Teal and orange bands of similar width. accessibility.md › Color and effects: &ldquo;Convey information with more than color alone.&rdquo; charts.md: &ldquo;Avoid relying solely on color to differentiate…&rdquo;</p></div><div class="fix"><p>The awake band now carries a text label on the chart, DarkWakes have their own tick lane (shape, not just hue), and the legend swatch for DarkWake is striped.</p></div></div>
+      <div class="finding"><div class="sev">Medium</div><div><h3>Measured / estimated badges sat at the 10 pt floor</h3><p>Badges were 0.78 em of 13 pt, about 10.1 pt. accessibility.md › Text size: macOS minimum is 10 pt. Too close for the one label the whole app's honesty depends on.</p></div><div class="fix"><p>Badges raised to 0.85 em (11 pt). Contrast of badge text: light 6.2:1 on white, dark 7.4:1 on the window colour.</p></div></div>
+      <div class="finding"><div class="sev">Medium</div><div><h3>Chart labels did not scale with text size</h3><p>The 70% and 80% grid labels were drawn inside the SVG, so they stayed small with Large text on. accessibility.md › Text size: support larger text in every part of the interface.</p></div><div class="fix"><p>Grid labels and the Awake label moved into text placed over the chart, so they follow the system text size like the axis below.</p></div></div>
+      <div class="finding"><div class="sev">Medium</div><div><h3>Sidebar could not be hidden</h3><p>sidebars.md › Best practices: &ldquo;Consider letting people hide the sidebar.&rdquo;</p></div><div class="fix"><p>Added the standard sidebar toggle beside the window controls (NavigationSplitView gives this for free). The sidebar also collapses to icons when the window gets narrow.</p></div></div>
+      <div class="finding"><div class="sev">Medium</div><div><h3>Pre-calibration baseline row was labelled Estimated</h3><p>A row saying &lsquo;Baseline not measured yet&rsquo; with an Estimated badge contradicts itself. writing.md: one meaning per label.</p></div><div class="fix"><p>New dashed &lsquo;Not measured&rsquo; badge, value shown as a dash, and that energy is counted under Unexplained with a note saying so.</p></div></div>
+      <div class="finding"><div class="sev">Medium</div><div><h3>Menu bar strip too tall, icon unclear</h3><p>the-menu-bar.md › Menu bar extras: &ldquo;The menu bar’s height is 24 pt.&rdquo; The strip was 27 pt and scaled with text size; the battery-with-bolt icon read as Low Power Mode.</p></div><div class="fix"><p>Menu bar fixed at 24 pt with 16 pt template icons. The Drainlog extra is now a battery outline with a falling line inside, monochrome so the system can tint it.</p></div></div>
+      <div class="finding"><div class="sev">Low</div><div><h3>Legend spacing and the Total row</h3><p>&lsquo;52 min , 62 wakes&rsquo; had a stray gap, and the Total row said &lsquo;14 pts&rsquo;, a unit used nowhere else.</p></div><div class="fix"><p>Legend reads &lsquo;DarkWake 52 min in 62 wakes&rsquo;. Total share column now says 100%.</p></div></div>
+      <div class="finding"><div class="sev">Medium</div><div><h3>A popover where HIG prefers a menu</h3><p>the-menu-bar.md › Menu bar extras: &ldquo;Display a menu — not a popover — when people click your menu bar extra. Unless the app functionality you want to expose is too complex for a menu…&rdquo;</p></div><div class="fix kept"><p>A timeline chart cannot live in an NSMenu, so this uses MenuBarExtra with the window style. It closes on click outside, has no Close button (popovers.md › Best practices), and the last row behaves like a menu item with ⌘O.</p></div></div>
+      <div class="finding"><div class="sev">Low</div><div><h3>White on system blue is 4.0:1</h3><p>The Open Battery Settings button is white on #007AFF, under the 4.5:1 in accessibility.md for 13 pt text.</p></div><div class="fix kept"><p>It is the system prominent button and will be built with .borderedProminent, so macOS draws it, follows the user's accent colour and darkens it under Increase Contrast. Not restyled.</p></div></div>
+    </div>
+    <p class="part-head" style="margin:0;color:var(--page-ink-2)">For the build: every toolbar item also gets a menu command (Go › Previous Night ⌘[, Next Night ⌘]), and the chart gets an accessibility chart descriptor so VoiceOver can read it as an audio graph.</p>
+  </section>
+
+  <section class="ask" aria-labelledby="h-ask">
+    <h2 id="h-ask">Approve or request changes</h2>
+    <p>Once these are approved, the SwiftUI shell gets built to match. Useful things to react to:</p>
+    <ul>
+      <li>The headline wording and whether 14% or 520 mAh should lead.</li>
+      <li>The band colours: indigo for asleep, orange for DarkWake, teal for awake.</li>
+      <li>How measured, estimated (≈) and unexplained (?) are marked.</li>
+      <li>What the popover leaves out compared with the window.</li>
+    </ul>
+  </section>
+</main>
+
+<script>
+(() => {
+  /* Critically damped spring (damping 1.0, response 0.35 s) sampled into CSS linear(). */
+  const response = 0.35, w = 2 * Math.PI / response, dur = 0.55, pts = [];
+  for (let i = 0; i <= 24; i++) { const t = dur * i / 24; pts.push((1 - (1 + w * t) * Math.exp(-w * t)).toFixed(4)); }
+  pts[pts.length - 1] = "1";
+  document.documentElement.style.setProperty("--spring", `linear(${pts.join(", ")})`);
+  const rm = matchMedia("(prefers-reduced-motion: reduce)");
+  const note = () => { document.getElementById("motionNote").textContent = rm.matches ? "Motion: off (Reduce Motion is on)" : "Motion: critically damped springs"; };
+  note(); rm.addEventListener?.("change", note);
+
+  /* ───── Sample night (minutes after 23:00) ───── */
+  const START = 10, END = 500, SPAN = 510;
+  const pn = Array.from({ length: 41 }, (_, i) => ({ t: 40 + i * 10.5, d: 0.85, r: "pn" }));
+  const bt = [55, 92, 131, 170, 204, 262, 291, 330, 352, 389, 418, 455].map(t => ({ t, d: 0.7, r: "bt" }));
+  const nw = [73, 148, 199, 247, 310, 371, 402, 437, 476].map(t => ({ t, d: 0.6, r: "nw" }));
+  const wakes = [...pn, ...bt, ...nw].sort((a, b) => a.t - b.t);
+  const awake = [{ t: 227, d: 4 }];
+  // battery: integrate % lost per minute by state, mAh shares from the ledger (520 mAh = 14%)
+  const pctPerMah = 14 / 520, dwMah = { pn: 255 / 41, bt: 60 / 12, nw: 30 / 9 };
+  function battAt(m) {
+    let lost = 0;
+    lost += (Math.min(m, END) - START) / (END - START) * (105 + 32) * pctPerMah;
+    for (const w of wakes) if (w.t <= m) lost += dwMah[w.r] * pctPerMah * Math.min(1, (m - w.t) / w.d);
+    for (const a of awake) if (a.t <= m) lost += 38 * pctPerMah * Math.min(1, (m - a.t) / a.d);
+    return 82 - lost;
+  }
+  const X = (m, W) => m / SPAN * W;
+
+  function chartSVG({ compact }) {
+    const W = 600, H = compact ? 64 : 132, top = compact ? 6 : 10, bot = compact ? 4 : 8;
+    const yMin = compact ? 66 : 64, yMax = compact ? 84 : 86;
+    const Y = v => top + (yMax - v) / (yMax - yMin) * (H - top - bot);
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Night timeline: asleep from 23:10 to 07:20, 62 short DarkWakes, one 4 minute full wake at 02:47; battery falls from 82% to 68%.">`;
+    s += `<rect x="${X(START, W)}" y="0" width="${X(END - START, W)}" height="${H}" rx="${compact ? 4 : 6}" fill="var(--asleep-band)"/>`;
+    const lane = compact ? 7 : 12;
+    for (const w of wakes) s += `<rect x="${X(w.t, W).toFixed(1)}" y="0" width="${Math.max(2, X(w.d, W)).toFixed(1)}" height="${H}" fill="var(--dw-band)"/><rect x="${X(w.t, W).toFixed(1)}" y="${H - lane}" width="2" height="${lane}" rx="1" fill="var(--orange)"/>`;
+    for (const a of awake) s += `<rect x="${X(a.t, W).toFixed(1)}" y="0" width="${X(a.d, W).toFixed(1)}" height="${H}" fill="var(--awake-band)"/>`;
+    let html = "";
+    if (!compact) for (const g of [70, 80]) { s += `<line x1="0" x2="${W}" y1="${Y(g)}" y2="${Y(g)}" stroke="var(--sep)" stroke-width="1"/>`; html += `<span class="glab" style="top:${(Y(g) / H * 100).toFixed(1)}%">${g}%</span>`; }
+    if (!compact) html += `<span class="alab" style="left:${((awake[0].t + 2) / SPAN * 100).toFixed(1)}%">Awake</span>`;
+    let d = "";
+    for (let m = START; m <= END; m += 1) d += (m === START ? "M" : "L") + X(m, W).toFixed(1) + " " + Y(battAt(m)).toFixed(2);
+    s += `<path d="${d}" fill="none" stroke="var(--line)" stroke-width="${compact ? 1.6 : 1.8}" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`;
+    s += `<circle cx="${X(START, W)}" cy="${Y(82)}" r="3.2" fill="var(--line)"/><circle cx="${X(END, W)}" cy="${Y(battAt(END))}" r="3.2" fill="var(--line)"/>`;
+    return `<div style="position:relative">${s}</svg>${html}</div>`;
+  }
+  function axis(compact) {
+    const ticks = compact ? [[START, "23:10"], [END, "07:20"]] : [[START, "23:10"], [120, "01:00"], [240, "03:00"], [360, "05:00"], [END, "07:20"]];
+    return `<div class="axis" aria-hidden="true">${ticks.map(([m, l]) => `<span style="left:${(m / SPAN * 100).toFixed(2)}%">${l}</span>`).join("")}</div>`;
+  }
+  const icon = (id, cls = "") => `<svg class="${cls}" aria-hidden="true"><use href="#${id}"/></svg>`;
+  const M = `<span class="badge m">Measured</span>`, E = `<span class="badge e">Estimated</span>`, U = `<span class="badge u">Unexplained</span>`;
+
+  function windowShell(body, uid) {
+    return `<div class="window" role="group" aria-label="Drainlog window">
+      <nav class="sidebar" aria-label="Drainlog sections">
+        <div class="lights"><i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i><button type="button" class="stog" aria-label="Hide Sidebar">${icon("i-side")}</button></div>
+        <div class="side-item sel" aria-current="page">${icon("i-moon")}<span>Last Night</span></div>
+        <div class="side-item">${icon("i-cal")}<span>Nights</span></div>
+        <div class="side-item">${icon("i-pat")}<span>Patterns</span></div>
+        <div class="side-foot">${icon("i-info")}<span>Recording since 11 Nov. Next report at wake.</span></div>
+      </nav>
+      <div class="main">
+        <div class="toolbar">
+          <div class="ttl"><b>Last Night</b><span>Wed 12 – Thu 13 Nov</span></div>
+          <div class="tools"><button class="tbtn" type="button" aria-label="Previous night">${icon("i-left")}</button><button class="tbtn" type="button" aria-label="Next night" aria-disabled="true">${icon("i-right")}</button></div>
+        </div>
+        <div class="content">${body}</div>
+      </div></div>`;
+  }
+
+  let uid = 0;
+  function report(el) {
+    const id = "lg" + (++uid), open = el.dataset.open === "true";
+    el.innerHTML = windowShell(`
+      <div class="hero">
+        <div class="hero-num"><span class="big">14%</span><span class="mah">520 mAh ${M}</span></div>
+        <h3>You lost 14% overnight. Mostly Power Nap wakes.</h3>
+        <p>Lid closed at 23:10 on 82%. Opened at 07:20 on 68%.</p>
+      </div>
+      <div class="block">
+        <div class="block-h"><h4>The night</h4><span class="sub">8 h 10 min on battery</span></div>
+        <div class="chart">${chartSVG({ compact: false })}${axis(false)}</div>
+        <div class="legend">
+          <span><i class="sw asleep"></i><span>Asleep <b>7 h 14 min</b></span></span>
+          <span><i class="sw dw"></i><span>DarkWake <b>52 min</b> in 62 wakes</span></span>
+          <span><i class="sw awake"></i><span>Awake <b>4 min</b></span></span>
+          <span><i class="sw batt"></i><span>Battery</span></span>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-h"><h4>What happened</h4></div>
+        <ol class="incidents">
+          <li><time>23:40</time><div><div class="what">Power Nap woke the Mac 41 times, about every 10 minutes.</div><div class="why">Mail, iCloud and Time Machine checks. About 255 mAh, estimated.</div></div></li>
+          <li><time>02:47</time><div><div class="what">Fully awake for 4 minutes.</div><div class="why">A scheduled wake from Software Update. 38 mAh, measured.</div></div></li>
+          <li><time>All night</time><div><div class="what">Magic Mouse woke the Mac 12 times.</div><div class="why">Bluetooth stays on during sleep. About 60 mAh, estimated.</div></div></li>
+          <li class="fix"><span class="tag">Fix</span><div><div class="what">Turn off Power Nap on battery.</div><div class="why">Battery › Options › Power Nap: Only on Power Adapter. Saves about 255 mAh a night.</div></div><button type="button" class="pbtn primary">Open Battery Settings</button></li>
+        </ol>
+      </div>
+      <div class="ledger${open ? " open" : ""}">
+        <button type="button" class="disclose" aria-expanded="${open}" aria-controls="${id}">${icon("i-chev", "chev")}<b>Where the 520 mAh went</b><span class="hint">${open ? "Hide" : "Show"} ledger</span></button>
+        <div class="more" id="${id}"><div>
+          <div class="row"><div class="nm"><b>Baseline sleep</b><small>7 h 14 min asleep, at your measured sleep rate</small></div><div class="val">≈105 mAh<span class="pct">20%</span></div><div class="lab">${E}</div></div>
+          <div class="row grp"><div class="nm"><b>DarkWakes</b><small>62 wakes, 52 min, by wake reason</small></div><div class="val">≈345 mAh<span class="pct">66%</span></div><div class="lab">${E}</div></div>
+          <div class="row child"><div class="nm"><span>Power Nap</span><small>41 wakes</small></div><div class="val">≈255 mAh<span class="pct">49%</span></div><div class="lab">${E}</div></div>
+          <div class="row child"><div class="nm"><span>Bluetooth: Magic Mouse</span><small>12 wakes</small></div><div class="val">≈60 mAh<span class="pct">12%</span></div><div class="lab">${E}</div></div>
+          <div class="row child"><div class="nm"><span>Network upkeep</span><small>9 wakes</small></div><div class="val">≈30 mAh<span class="pct">6%</span></div><div class="lab">${E}</div></div>
+          <div class="row"><div class="nm"><b>Awake</b><small>4 min, Software Update</small></div><div class="val">38 mAh<span class="pct">7%</span></div><div class="lab">${M}</div></div>
+        </div></div>
+        <div class="row unx"><div class="nm"><b>Unexplained</b><small>Total drop minus everything Drainlog can attribute</small></div><div class="val">32 mAh<span class="pct">6%</span></div><div class="lab">${U}</div></div>
+        <div class="row total"><div class="nm"><b>Total</b><small>Battery counter, 23:10 to 07:20</small></div><div class="val">520 mAh<span class="pct">100%</span></div><div class="lab">${M}</div></div>
+      </div>`);
+  }
+
+  function precal(el) {
+    el.innerHTML = windowShell(`
+      <div class="hero">
+        <div class="hero-num"><span class="big">9%</span><span class="mah">335 mAh ${M}</span></div>
+        <h3>You lost 9% overnight. Mostly Power Nap wakes.</h3>
+      </div>
+      <div class="notice">${icon("i-info")}<div><b>Baseline not measured yet</b><span>After one night with the lid closed and nothing waking the Mac, Drainlog can tell normal sleep drain apart. Until then it stays in unexplained.</span></div></div>
+      <div class="ledger open">
+        <div class="row"><div class="nm"><b>Baseline sleep</b><small class="pending">Baseline not measured yet</small></div><div class="val">—</div><div class="lab"><span class="badge n">Not measured</span></div></div>
+        <div class="row"><div class="nm"><b>DarkWakes</b><small>38 wakes, mostly Power Nap</small></div><div class="val">≈190 mAh<span class="pct">57%</span></div><div class="lab">${E}</div></div>
+        <div class="row"><div class="nm"><b>Awake</b><small>None</small></div><div class="val">0 mAh<span class="pct">0%</span></div><div class="lab">${M}</div></div>
+        <div class="row unx"><div class="nm"><b>Unexplained</b><small>Includes normal sleep drain for now</small></div><div class="val">145 mAh<span class="pct">43%</span></div><div class="lab">${U}</div></div>
+        <div class="row total"><div class="nm"><b>Total</b><small>Battery counter</small></div><div class="val">335 mAh<span class="pct">100%</span></div><div class="lab">${M}</div></div>
+      </div>`);
+  }
+
+  function pop(el) {
+    const dark = el.classList.contains("t-dark");
+    el.innerHTML = `<div class="desk ${dark ? "dark" : "light"}">
+      <div class="menubar">
+        <span class="mb" aria-hidden="true">${icon("i-wifi")}</span>
+        <span class="mb" aria-hidden="true">${icon("i-batt")}</span>
+        <button type="button" class="mb on dl" aria-label="Drainlog" aria-expanded="true">${icon("i-dl")}</button>
+        <span class="mb" aria-hidden="true">${icon("i-search")}</span>
+        <span class="mb" aria-hidden="true">${icon("i-ctrl")}</span>
+        <span class="mb clock">Thu 07:24</span>
+      </div>
+      <div class="popwrap"><div class="pop" role="dialog" aria-label="Drainlog: last night">
+        <div class="head">
+          <div class="numline"><span class="big">14%</span><span class="mah">520 mAh ${M}</span></div>
+          <div class="sent">Mostly Power Nap wakes.</div>
+        </div>
+        <div class="mini chart">${chartSVG({ compact: true })}${axis(true)}</div>
+        <div class="sect">
+          <div class="cause"><span class="ic">${icon("i-wake")}</span><div><b>Power Nap woke it 41 times</b><small>≈255 mAh, about half the drop ${E}</small></div></div>
+          <div class="cause"><span class="ic fixic">${icon("i-wrench")}</span><div><b>Turn off Power Nap on battery</b><small>Battery › Options › Power Nap</small></div><button type="button" class="pbtn act">Open Battery Settings</button></div>
+        </div>
+        <div class="sect">
+          <button type="button" class="menurow"><span>Open Drainlog</span><kbd>⌘O</kbd></button>
+        </div>
+      </div></div></div>`;
+    const btn = el.querySelector(".dl"), p = el.querySelector(".pop");
+    btn.addEventListener("click", () => { const c = p.classList.toggle("closed"); btn.classList.toggle("on", !c); btn.setAttribute("aria-expanded", String(!c)); });
+  }
+
+  document.querySelectorAll("[data-report]").forEach(report);
+  document.querySelectorAll("[data-precal]").forEach(precal);
+  document.querySelectorAll("[data-pop]").forEach(pop);
+
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".disclose"); if (!b) return;
+    const l = b.closest(".ledger"), o = l.classList.toggle("open");
+    b.setAttribute("aria-expanded", String(o)); b.querySelector(".hint").textContent = (o ? "Hide" : "Show") + " ledger";
+  });
+  document.getElementById("sizeSeg").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    document.documentElement.classList.toggle("large-text", b.dataset.size === "large");
+    document.querySelectorAll("#sizeSeg button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  });
+})();
+</script>
