@@ -1,0 +1,23 @@
+name: Bug report
+description: A wrong cause, a wrong number, or something broken
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What did Drainlog say, and what did you expect it to say?
+    validations:
+      required: true
+  - type: input
+    id: mac
+    attributes:
+      label: Mac and macOS version
+      placeholder: MacBook Air M1, macOS 27.2
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs (optional)
+      description: Run `judge/capture.sh <name>`, which removes your hostname, username and machine IDs, and attach the relevant parts. Never paste raw logs that haven't been through it.

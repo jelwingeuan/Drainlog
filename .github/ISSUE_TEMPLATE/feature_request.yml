@@ -1,0 +1,15 @@
+name: Feature request
+description: An idea that helps explain overnight battery drain
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: Which question about your battery does Drainlog fail to answer today?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
