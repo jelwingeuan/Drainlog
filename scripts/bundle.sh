@@ -29,7 +29,8 @@ fi
 echo "==> build/Drainlog.app"
 app=build/Drainlog.app
 rm -rf "$app"
-mkdir -p "$app/Contents/MacOS" "$app/Contents/Library/LaunchAgents"
+mkdir -p "$app/Contents/MacOS" "$app/Contents/Library/LaunchAgents" "$app/Contents/Resources"
+cp app/Bundle/AppIcon.icns "$app/Contents/Resources/"
 cp app/Bundle/Info.plist "$app/Contents/Info.plist"
 cp app/Bundle/com.drainlog.agent.plist "$app/Contents/Library/LaunchAgents/"
 cp "$bin/Drainlog" build/drainlogd "$app/Contents/MacOS/"
