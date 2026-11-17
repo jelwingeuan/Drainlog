@@ -1,4 +1,6 @@
-# Drainlog
+<p align="center"><img src="docs/logo.svg" width="128" height="128" alt="Drainlog icon: a battery with a moon-shaped bite taken out of its charge"></p>
+
+<h1 align="center">Drainlog</h1>
 
 Answers one question: **why did my Mac's battery die overnight?**
 
